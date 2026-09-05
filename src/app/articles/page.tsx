@@ -1,14 +1,16 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAllArticles } from "@/data/journals";
+import { getPublishedArticles } from "@/lib/articles";
 
 export const metadata: Metadata = {
   title: "Articles",
   description: "Browse research articles published across Axiom Journals.",
 };
 
-export default function ArticlesPage() {
-  const articles = getAllArticles();
+export const dynamic = "force-dynamic";
+
+export default async function ArticlesPage() {
+  const articles = await getPublishedArticles();
 
   return (
     <>
@@ -25,16 +27,19 @@ export default function ArticlesPage() {
       <section className="section">
         <div className="container">
           <div className="article-list">
-            {articles.map(({ article, journal }) => (
+            {articles.length === 0 && (
+              <p>No article has been published yet.</p>
+            )}
+            {articles.map((article) => (
               <Link
                 className="article-row"
                 href={`/articles/${article.slug}`}
                 key={article.slug}
               >
-                <span>RESEARCH ARTICLE · {journal.name.toUpperCase()}</span>
+                <span>RESEARCH ARTICLE · {article.journal.toUpperCase()}</span>
                 <h3>{article.title}</h3>
                 <p>
-                  {article.author} · {article.volume} · {article.year}
+                  {article.author} · {new Date(article.created_at).getFullYear()}
                 </p>
                 <b>Read article →</b>
               </Link>
@@ -45,3 +50,4 @@ export default function ArticlesPage() {
     </>
   );
 }
+

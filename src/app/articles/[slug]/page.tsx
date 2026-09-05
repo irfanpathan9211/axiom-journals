@@ -1,12 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllArticles, getArticleBySlug } from "@/data/journals";
+import { getPublishedArticleBySlug } from "@/lib/articles";
 import PrintButton from "@/components/PrintButton";
 
-export function generateStaticParams() {
-  return getAllArticles().map(({ article }) => ({ slug: article.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -14,11 +12,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const result = getArticleBySlug(slug);
-  if (!result) return {};
+  const article = await getPublishedArticleBySlug(slug);
+  if (!article) return {};
   return {
-    title: result.article.title,
-    description: `${result.article.title} — a research article published in ${result.journal.name}.`,
+    title: article.title,
+    description:
+      article.abstract ||
+      `${article.title} — a research article published in ${article.journal}.`,
   };
 }
 
@@ -28,9 +28,12 @@ export default async function ArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const result = getArticleBySlug(slug);
-  if (!result) notFound();
-  const { article, journal } = result;
+  const article = await getPublishedArticleBySlug(slug);
+  if (!article) notFound();
+
+  const tags = article.tags
+    ? article.tags.split(",").map((t) => t.trim()).filter(Boolean)
+    : [];
 
   return (
     <>
@@ -39,11 +42,14 @@ export default async function ArticlePage({
           <span className="tag">RESEARCH ARTICLE</span>
           <h1>{article.title}</h1>
           <p className="authors">
-            {article.author} · {journal.name} · {article.year}
+            {article.author} · {article.journal} ·{" "}
+            {new Date(article.created_at).getFullYear()}
           </p>
           <div className="article-meta">
-            <span>{article.volume}</span>
-            <span>Published: {article.year}</span>
+            {article.category && <span>{article.category}</span>}
+            <span>
+              Published: {new Date(article.created_at).toLocaleDateString()}
+            </span>
             <span>DOI: Coming Soon</span>
           </div>
         </div>
@@ -52,54 +58,42 @@ export default async function ArticlePage({
       <section className="section">
         <div className="container article-layout">
           <article className="prose">
-            <div className="abstract">
-              <strong>Abstract</strong>
-              <p>
-                This is a sample article page. Replace this text with the
-                official abstract, author details, keywords and full
-                manuscript content. The layout supports long-form academic
-                articles and can be extended with figures, tables and
-                references.
-              </p>
+            {article.image && (
+              <img
+                src={article.image}
+                alt={article.title}
+                style={{ width: "100%", borderRadius: 8, marginBottom: 24 }}
+              />
+            )}
+
+            {article.abstract && (
+              <div className="abstract">
+                <strong>Abstract</strong>
+                <p>{article.abstract}</p>
+              </div>
+            )}
+
+            {tags.length > 0 && (
+              <div className="tags" style={{ margin: "16px 0" }}>
+                {tags.map((tag) => (
+                  <span key={tag} style={{ marginRight: 8 }} className="tag-pill">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <div className="article-content" style={{ whiteSpace: "pre-wrap" }}>
+              {article.content}
             </div>
 
-            <h2>1. Introduction</h2>
-            <p>
-              Research in this area examines how the field creates and
-              sustains value in changing environments. This template provides
-              a clean reading experience for scholarly publications.
-            </p>
-
-            <h2>2. Literature Review</h2>
-            <p>
-              Use this section for the literature review and relevant
-              citations. You can add headings, quotations, numbered lists,
-              tables and figures without changing the overall layout.
-            </p>
-
-            <h2>3. Methodology</h2>
-            <p>
-              Describe the research design, sample, data collection and
-              analytical approach here.
-            </p>
-
-            <h2>4. Results and Discussion</h2>
-            <p>
-              Present findings and discuss their implications for theory and
-              practice.
-            </p>
-
-            <h2>5. Conclusion</h2>
-            <p>
-              Summarize the principal findings, limitations and opportunities
-              for future research.
-            </p>
-
-            <h2>References</h2>
-            <ol>
-              <li>Author, A. (2026). Sample reference for demonstration.</li>
-              <li>Author, B. (2025). Another sample reference.</li>
-            </ol>
+            {article.file_url && (
+              <p style={{ marginTop: 24 }}>
+                <a href={article.file_url} target="_blank" rel="noopener noreferrer">
+                  Download full manuscript (PDF)
+                </a>
+              </p>
+            )}
           </article>
 
           <aside className="sidebar">
