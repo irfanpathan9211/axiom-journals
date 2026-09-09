@@ -1,0 +1,238 @@
+.wrapper {
+    --ink: #12203a;
+    --ink-2: #1b2c4d;
+    --paper: #fbf8f2;
+    --gold: #b4863c;
+    --gold-deep: #8f6a2e;
+    --rule: #e3dcc9;
+    --slate: #5b6472;
+    --brick: #9b3a32;
+    --brick-tint: #f5e4e1;
+
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top, #1b2c4d 0%, #0c1526 75%);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    padding: 24px;
+    overflow: hidden;
+    position: relative;
+}
+
+.wrapper::before,
+.wrapper::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.25;
+    animation: float 10s ease-in-out infinite;
+}
+
+.wrapper::before {
+    width: 320px;
+    height: 320px;
+    background: var(--gold);
+    top: -80px;
+    left: -80px;
+}
+
+.wrapper::after {
+    width: 260px;
+    height: 260px;
+    background: #3e6b4c;
+    bottom: -60px;
+    right: -60px;
+    animation-delay: 2s;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) translateX(0);
+    }
+
+    50% {
+        transform: translateY(30px) translateX(20px);
+    }
+}
+
+.card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 380px;
+    background: var(--paper);
+    border-radius: 10px;
+    padding: 44px 36px 36px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(180, 134, 60, 0.15);
+    animation: cardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.crest {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 18px;
+    border: 1.5px solid var(--gold);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Source Serif 4", Georgia, serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gold-deep);
+    background: #fff;
+}
+
+.title {
+    text-align: center;
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0 0 4px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--slate);
+    margin: 0 0 30px;
+    letter-spacing: 0.02em;
+}
+
+.field {
+    position: relative;
+    margin-bottom: 22px;
+}
+
+.input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--ink);
+    background: #fff;
+    border: 1.5px solid var(--rule);
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(180, 134, 60, 0.14);
+}
+
+.input::placeholder {
+    color: #b6b0a1;
+}
+
+.submitBtn {
+    position: relative;
+    width: 100%;
+    padding: 14px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+    background: var(--ink-2);
+    transform: translateY(-1px);
+}
+
+.submitBtn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.spinner {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 8px;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 11px 14px;
+    background: var(--brick-tint);
+    color: var(--brick);
+    font-size: 13.5px;
+    font-weight: 600;
+    border-radius: 6px;
+    animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-6px);
+    }
+
+    40% {
+        transform: translateX(6px);
+    }
+
+    60% {
+        transform: translateX(-4px);
+    }
+
+    80% {
+        transform: translateX(4px);
+    }
+}
+
+.footer {
+    text-align: center;
+    margin-top: 26px;
+    font-size: 12px;
+    color: #8b93a3;
+    letter-spacing: 0.04em;
+}
