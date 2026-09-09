@@ -2,45 +2,65 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import styles from "./login.module.css";
 
 export default function AdminLogin() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError("");
+        setLoading(true);
 
-        const res = await fetch("/api/admin/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ password }),
-        });
+        try {
+            const res = await fetch("/api/admin/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ password }),
+            });
 
-        if (res.ok) {
-            router.push("/admin/dashboard");
-        } else {
-            setError("Wrong Password, Try Again");
+            if (res.ok) {
+                router.push("/admin/dashboard");
+            } else {
+                setError("Wrong password, try again");
+            }
+        } catch {
+            setError("Something went wrong. Please try again.");
+        } finally {
+            setLoading(false);
         }
     }
 
     return (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
-            <form onSubmit={handleSubmit} style={{ width: "320px", padding: "32px", border: "1px solid #ddd", borderRadius: "8px" }}>
-                <h2 style={{ marginBottom: "20px" }}>Admin Login</h2>
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    style={{ width: "100%", padding: "10px", marginBottom: "12px", border: "1px solid #ccc", borderRadius: "4px" }}
-                />
-                {error && <p style={{ color: "red", marginBottom: "12px" }}>{error}</p>}
-                <button type="submit" style={{ width: "100%", padding: "10px", background: "#b8860b", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer" }}>
-                    Login
+        <div className={styles.wrapper}>
+            <form onSubmit={handleSubmit} className={styles.card}>
+                <div className={styles.brandMark}>A</div>
+                <p className={styles.brand}>Axiom Journals</p>
+                <h2 className={styles.title}>Admin Login</h2>
+                <div className={styles.divider} />
+
+                <div className={styles.field}>
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className={styles.input}
+                        autoFocus
+                    />
+                </div>
+
+                {error && <p className={styles.error}>{error}</p>}
+
+                <button type="submit" className={styles.button} disabled={loading}>
+                    {loading ? "Signing in..." : "Login"}
                 </button>
+
+                <p className={styles.footer}>© {new Date().getFullYear()} Axiom Journals</p>
             </form>
         </div>
     );
