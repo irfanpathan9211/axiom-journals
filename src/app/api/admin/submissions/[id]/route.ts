@@ -9,7 +9,7 @@ function slugify(text: string) {
     return text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
 }
 
-// Publish karne ke liye
+// Publish the submission as an article
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     if (!checkAuth(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { id } = await params;
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const submissions = rows as any[];
 
     if (submissions.length === 0) {
-        return NextResponse.json({ error: "Submission nahi mili" }, { status: 404 });
+        return NextResponse.json({ error: "Submission not found" }, { status: 404 });
     }
 
     const sub = submissions[0];
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             sub.author_name,
             sub.journal,
             sub.message || null,
-            sub.message || "Full manuscript neeche diye gaye file se download karein.",
+            sub.message || "Download the full manuscript from the file below.",
             sub.file_url,
         ]
     );
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ success: true, slug });
 }
 
-// Reject/Delete karne ke liye
+// Reject/Delete the submission
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     if (!checkAuth(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { id } = await params;
