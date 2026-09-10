@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
         const file = formData.get("file") as File | null;
 
         if (!authorName || !email || !journal || !title || !file) {
-            return NextResponse.json({ error: "Author name, email, journal, title aur file zaroori hain." }, { status: 400 });
+            return NextResponse.json({ error: "Author name, email, journal, title and file are required." }, { status: 400 });
         }
 
         const bytes = await file.arrayBuffer();
@@ -36,6 +36,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true });
     } catch (err) {
         console.error("Submission error:", err);
-        return NextResponse.json({ error: "Kuch galat ho gaya. Dubara try karein." }, { status: 500 });
+        return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
     }
 }
