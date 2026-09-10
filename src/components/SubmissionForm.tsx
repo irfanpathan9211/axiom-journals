@@ -18,7 +18,7 @@ export default function SubmissionForm() {
       const res = await fetch("/api/submit", {
         method: "POST",
         body: formData,
-      });
+      });‹‹
 
       const data = await res.json();
 
