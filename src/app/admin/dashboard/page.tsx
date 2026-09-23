@@ -389,7 +389,7 @@ export default function AdminDashboard() {
                                     {submissions.map((s) => (
                                         <tr key={s.id}>
                                             <td>{s.author_name}</td>
-                                            <td><a href={`mailto:${s.email}`}>{s.email}</a></td>
+                                            <td>{s.email}</td>
                                             <td>{s.journal}</td>
                                             <td>{s.title}</td>
                                             <td className={styles.colMessage}>

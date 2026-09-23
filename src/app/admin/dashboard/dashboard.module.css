@@ -23,6 +23,72 @@
     min-height: 100vh;
 }
 
+/* ---------- Shared motion ---------- */
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rowIn {
+    from {
+        opacity: 0;
+        transform: translateX(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 /* ---------- Masthead ---------- */
 
 .header {
@@ -32,6 +98,7 @@
     padding: 28px 40px;
     background: var(--ink);
     border-bottom: 3px solid var(--gold);
+    animation: fadeInDown 0.5s ease both;
 }
 
 .headerTitle {
@@ -52,12 +119,18 @@
     font-weight: 600;
     border-radius: 3px;
     cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .logoutBtn:hover {
     background: var(--gold);
     color: var(--ink);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(180, 134, 60, 0.3);
+}
+
+.logoutBtn:active {
+    transform: translateY(0);
 }
 
 /* ---------- Tab strip ---------- */
@@ -68,6 +141,7 @@
     padding: 0 40px;
     background: var(--ink-2);
     overflow-x: auto;
+    animation: fadeInDown 0.5s ease 0.05s both;
 }
 
 .tabButton {
@@ -80,11 +154,13 @@
     font-weight: 600;
     white-space: nowrap;
     cursor: pointer;
-    transition: color 0.15s ease;
+    transition: color 0.15s ease, background 0.15s ease;
+    border-radius: 4px 4px 0 0;
 }
 
 .tabButton:hover {
     color: #fff;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .tabButtonActive {
@@ -100,6 +176,7 @@
     height: 3px;
     background: var(--gold);
     border-radius: 2px 2px 0 0;
+    animation: fadeIn 0.2s ease both;
 }
 
 /* ---------- Content sheet ---------- */
@@ -108,8 +185,10 @@
     margin: 32px 40px 56px;
     background: #fff;
     border: 1px solid var(--rule);
-    border-radius: 4px;
+    border-radius: 6px;
     padding: 8px;
+    box-shadow: 0 1px 2px rgba(18, 32, 58, 0.04), 0 12px 28px rgba(18, 32, 58, 0.06);
+    animation: fadeInUp 0.4s ease 0.1s both;
 }
 
 .emptyState {
@@ -119,16 +198,34 @@
     font-size: 17px;
     font-style: italic;
     color: var(--slate);
+    animation: fadeIn 0.4s ease both;
 }
 
 .loadingText {
-    padding: 32px 24px;
-    text-align: center;
-    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 24px;
     color: var(--slate);
+    font-size: 14px;
+}
+
+.loadingText::before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    border: 2px solid var(--rule);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
 }
 
 /* ---------- Table ---------- */
+
+.tableWrap {
+    overflow-x: auto;
+}
 
 .table {
     width: 100%;
@@ -149,12 +246,41 @@
     white-space: nowrap;
 }
 
+.table tbody tr {
+    animation: rowIn 0.35s ease both;
+}
+
+.table tbody tr:nth-child(1) {
+    animation-delay: 0.02s;
+}
+
+.table tbody tr:nth-child(2) {
+    animation-delay: 0.06s;
+}
+
+.table tbody tr:nth-child(3) {
+    animation-delay: 0.1s;
+}
+
+.table tbody tr:nth-child(4) {
+    animation-delay: 0.14s;
+}
+
+.table tbody tr:nth-child(5) {
+    animation-delay: 0.18s;
+}
+
+.table tbody tr:nth-child(n+6) {
+    animation-delay: 0.2s;
+}
+
 .table tbody td {
     padding: 16px 18px;
     border-bottom: 1px solid var(--rule);
     color: var(--ink);
     vertical-align: top;
     line-height: 1.5;
+    transition: background 0.15s ease;
 }
 
 .table tbody tr:last-child td {
@@ -175,43 +301,61 @@
     text-decoration: underline;
 }
 
-/* ---------- Message preview cell ---------- */
-
+/* Keep the message column from stretching the whole table out of shape */
 .colMessage {
+    width: 260px;
     max-width: 260px;
 }
 
+.colActions {
+    width: 1%;
+    white-space: nowrap;
+}
+
+/* ---------- Clipped message cell + "Read more" ---------- */
+
 .messageCell {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+    display: block;
+    width: 100%;
+    max-width: 260px;
     padding: 0;
     background: none;
     border: none;
-    cursor: pointer;
     text-align: left;
     font: inherit;
     color: inherit;
+    cursor: pointer;
 }
 
 .messageText {
-    display: block;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
     word-break: break-word;
 }
 
-.messageEmpty {
-    color: var(--slate);
+.messageCell:hover .messageText {
+    color: var(--ink-2);
 }
 
 .readMore {
+    display: inline-block;
+    margin-top: 4px;
     font-size: 12px;
     font-weight: 700;
     color: var(--gold-deep);
+    letter-spacing: 0.02em;
+    transition: transform 0.15s ease;
 }
 
 .messageCell:hover .readMore {
     text-decoration: underline;
+    transform: translateX(2px);
+}
+
+.messageEmpty {
+    color: var(--slate);
 }
 
 /* ---------- Status badge ---------- */
@@ -226,35 +370,31 @@
     letter-spacing: 0.04em;
     text-transform: uppercase;
     border-radius: 3px;
+    animation: scaleIn 0.3s ease both;
 }
 
-/* ---------- Actions column & buttons ---------- */
-
-.colActions {
-    width: 190px;
-    min-width: 190px;
-}
+/* ---------- Action buttons ---------- */
 
 .actionsCell {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 8px;
-    flex-wrap: nowrap;
+    gap: 10px;
 }
 
 .actionBtn {
-    flex: 1 1 0;
-    min-width: 74px;
-    padding: 8px 16px;
+    min-width: 88px;
+    padding: 7px 14px;
     font-size: 13px;
     font-weight: 600;
-    border-radius: 4px;
-    border: 1.5px solid transparent;
-    cursor: pointer;
     text-align: center;
-    line-height: 1.2;
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.actionBtn:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 .actionBtn:disabled {
@@ -263,7 +403,7 @@
 }
 
 .editBtn {
-    background: #fff;
+    background: transparent;
     border-color: var(--gold);
     color: var(--gold-deep);
 }
@@ -271,10 +411,12 @@
 .editBtn:hover:not(:disabled) {
     background: var(--gold);
     color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(180, 134, 60, 0.28);
 }
 
 .deleteBtn {
-    background: #fff;
+    background: transparent;
     border-color: var(--brick);
     color: var(--brick);
 }
@@ -282,6 +424,8 @@
 .deleteBtn:hover:not(:disabled) {
     background: var(--brick);
     color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(155, 58, 50, 0.28);
 }
 
 /* ---------- Form ---------- */
@@ -363,11 +507,17 @@
     border: none;
     border-radius: 3px;
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .submitBtn:hover:not(:disabled) {
     background: var(--ink-2);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(18, 32, 58, 0.25);
+}
+
+.submitBtn:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 .submitBtn:disabled {
@@ -398,6 +548,7 @@
     font-size: 14px;
     font-weight: 600;
     border-radius: 3px;
+    animation: fadeInUp 0.3s ease both;
 }
 
 .formMsgSuccess {
@@ -410,7 +561,7 @@
     color: var(--brick);
 }
 
-/* ---------- Modal (full message viewer) ---------- */
+/* ---------- Full-message viewer modal ---------- */
 
 .modalOverlay {
     position: fixed;
@@ -421,18 +572,20 @@
     justify-content: center;
     padding: 24px;
     z-index: 1000;
+    animation: fadeIn 0.2s ease both;
 }
 
 .modalCard {
-    background: #fff;
     width: 100%;
     max-width: 560px;
     max-height: 80vh;
-    display: flex;
-    flex-direction: column;
-    border-radius: 4px;
+    overflow-y: auto;
+    background: #fff;
     border: 1px solid var(--rule);
-    overflow: hidden;
+    border-radius: 6px;
+    padding: 26px 28px;
+    box-shadow: 0 24px 60px rgba(18, 32, 58, 0.35);
+    animation: scaleIn 0.25s cubic-bezier(0.2, 0.8, 0.3, 1) both;
 }
 
 .modalHeader {
@@ -440,15 +593,15 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
-    padding: 20px 24px;
-    background: var(--paper-2);
+    padding-bottom: 16px;
+    margin-bottom: 16px;
     border-bottom: 1px solid var(--rule);
 }
 
 .modalTitle {
     margin: 0 0 4px;
     font-family: "Source Serif 4", Georgia, serif;
-    font-size: 19px;
+    font-size: 20px;
     font-weight: 600;
     color: var(--ink);
 }
@@ -461,37 +614,31 @@
 
 .modalClose {
     flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    background: transparent;
+    width: 30px;
+    height: 30px;
+    background: var(--paper-2);
     border: 1px solid var(--rule);
     border-radius: 3px;
     color: var(--slate);
     font-size: 14px;
+    line-height: 1;
     cursor: pointer;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
 .modalClose:hover {
+    background: var(--brick);
     border-color: var(--brick);
-    color: var(--brick);
+    color: #fff;
 }
 
 .modalBody {
-    padding: 24px;
-    overflow-y: auto;
     font-family: "Source Serif 4", Georgia, serif;
     font-size: 15.5px;
-    line-height: 1.7;
+    line-height: 1.75;
     color: var(--ink);
     white-space: pre-wrap;
     word-break: break-word;
-}
-
-/* ---------- Table horizontal scroll wrapper ---------- */
-
-.tableWrap {
-    overflow-x: auto;
 }
 
 /* ---------- Responsive ---------- */
@@ -523,14 +670,9 @@
         margin-right: 18px;
     }
 
-    .colActions {
-        width: 160px;
-        min-width: 160px;
-    }
-
-    .actionBtn {
-        min-width: 60px;
-        padding: 8px 10px;
+    .colMessage {
+        width: 180px;
+        max-width: 180px;
     }
 }
 
@@ -543,8 +685,26 @@
     .cancelEditBtn,
     .input,
     .textarea,
-    .messageCell,
-    .modalClose {
+    .modalClose,
+    .readMore {
         transition: none;
+    }
+
+    .header,
+    .tabs,
+    .card,
+    .emptyState,
+    .table tbody tr,
+    .badge,
+    .formMsg,
+    .modalOverlay,
+    .modalCard,
+    .tabButtonActive::after {
+        animation: none;
+    }
+
+    .loadingText::before {
+        animation: none;
+        border-top-color: var(--rule);
     }
 }
